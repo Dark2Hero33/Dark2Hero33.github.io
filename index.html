@@ -1,1224 +1,417 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>家恒牛羊肉</title>
+    <title>美团风格商品浏览</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
         }
-
+        
         body {
-            background-color: #f8f4f0;
-            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
         }
-
-        /* 顶部导航栏 */
-        .navbar {
+        
+        .header {
+            background-color: #06c1ae;
+            color: white;
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #e6d8c9;
+            padding: 0 15px;
         }
-
+        
         .logo {
-            color: #962d2d;
-            font-size: 1.5rem;
+            font-size: 24px;
             font-weight: bold;
         }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
+        
+        .search-bar {
+            flex-grow: 1;
+            margin: 0 20px;
+            position: relative;
         }
-
-        .nav-link {
-            color: #6d4c41;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: #962d2d;
-        }
-
-        /* 移动端导航 */
-        @media (max-width: 600px) {
-            .navbar {
-                flex-direction: column;
-                gap: 10px;
-            }
-            .nav-links {
-                gap: 15px;
-            }
-        }
-
-        /* 页面标题 */
-        .hero {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .hero h1 {
-            color: #962d2d;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .hero p {
-            color: #6d4c41;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* 分类标签 */
-        .category-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .tab {
-            background-color: #e6d8c9;
-            color: #6d4c41;
-            padding: 8px 15px;
+        
+        .search-bar input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
             border-radius: 20px;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        .search-bar button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #06c1ae;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s;
         }
-
-        .tab:hover,
-        .tab.active {
-            background-color: #962d2d;
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-menu a {
             color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            font-size: 14px;
         }
-
-        /* 商品列表 */
+        
+        .main-container {
+            max-width: 1200px;
+            margin: 80px auto 20px;
+            padding: 0 15px;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 220px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-right: 20px;
+        }
+        
+        .category-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .category-list li {
+            list-style: none;
+            margin-bottom: 12px;
+        }
+        
+        .category-list a {
+            color: #666;
+            text-decoration: none;
+            font-size: 15px;
+            display: block;
+            padding: 5px 0;
+        }
+        
+        .category-list a:hover {
+            color: #06c1ae;
+        }
+        
+        .content {
+            flex-grow: 1;
+        }
+        
+        .filter-bar {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .filter-options {
+            display: flex;
+        }
+        
+        .filter-option {
+            margin-right: 20px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .filter-option:hover {
+            color: #06c1ae;
+        }
+        
+        .sort-options {
+            display: flex;
+            align-items: center;
+        }
+        
+        .sort-option {
+            margin-left: 15px;
+            cursor: pointer;
+        }
+        
+        .sort-option.active {
+            color: #06c1ae;
+            font-weight: bold;
+        }
+        
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
+            gap: 15px;
         }
-
+        
         .product-card {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(109, 76, 65, 0.1);
+            border-radius: 8px;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
         }
-
+        
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(109, 76, 65, 0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
-        .product-img {
+        
+        .product-image {
             width: 100%;
-            height: 200px;
+            height: 180px;
             object-fit: cover;
-            transition: transform 0.5s;
         }
-
-        .product-card:hover .product-img {
-            transform: scale(1.05);
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #962d2d;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
-
+        
         .product-info {
-            padding: 15px 20px;
+            padding: 15px;
         }
-
-        .product-name {
-            font-size: 1.2rem;
-            color: #3e2723;
+        
+        .product-title {
+            font-size: 16px;
+            font-weight: bold;
             margin-bottom: 8px;
-            font-weight: bold;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 44px;
         }
-
+        
         .product-desc {
-            color: #6d4c41;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            height: 45px;
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
             overflow: hidden;
         }
-
-        .product-footer {
+        
+        .product-price {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            margin-bottom: 10px;
         }
-
-        .price {
-            color: #962d2d;
-            font-size: 1.3rem;
+        
+        .current-price {
+            color: #ff6600;
+            font-size: 18px;
             font-weight: bold;
         }
-
-        .weight {
-            color: #8d6e63;
-            font-size: 0.9rem;
+        
+        .original-price {
+            color: #999;
+            font-size: 14px;
+            text-decoration: line-through;
+            margin-left: 8px;
         }
-
-        /* 图片加载占位效果 */
-        .product-img-placeholder {
-            background: #f0f0f0;
-            width: 100%;
-            height: 200px;
-            position: relative;
-            overflow: hidden;
+        
+        .sold-count {
+            color: #999;
+            font-size: 13px;
         }
-
-        .product-img-placeholder::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
+        
+        .product-tag {
+            display: inline-block;
+            background: #fff0e6;
+            color: #ff6600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-top: 5px;
         }
-
-        @keyframes loading {
-            0% {
-                background-position: 200% 0;
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
             }
-            100% {
-                background-position: -200% 0;
+            
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 15px;
             }
-        }
-
-        /* 底部信息 */
-        .footer {
-            margin-top: 50px;
-            padding: 20px 0;
-            border-top: 1px solid #e6d8c9;
-            text-align: center;
-            color: #6d4c41;
-            font-size: 0.9rem;
-        }
-
-        /* 移动端适配 */
-        @media (max-width: 600px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
+            
             .product-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            
+            .product-title {
+                font-size: 14px;
+                height: 38px;
             }
         }
     </style>
 </head>
-
 <body>
-    <!-- 导航栏 -->
-    <div class="navbar">
-        <div class="logo">家恒牛羊肉</div>
-        <div class="nav-links">
-            <a href="#" class="nav-link">首页</a>
-            <a href="#" class="nav-link">商品分类</a>
-            <a href="#" class="nav-link">关于我们</a>
-            <a href="#" class="nav-link">联系方式</a>
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">美团</div>
+            <div class="search-bar">
+                <input type="text" placeholder="搜索商家、商品名称">
+                <button>🔍</button>
+            </div>
+            <div class="user-menu">
+                <a href="#">登录</a>
+                <a href="#">注册</a>
+            </div>
         </div>
+    </header>
+    
+    <div class="main-container">
+        <aside class="sidebar">
+            <h3 class="category-title">全部分类</h3>
+            <ul class="category-list">
+                <li><a href="#">美食</a></li>
+                <li><a href="#">外卖</a></li>
+                <li><a href="#">酒店</a></li>
+                <li><a href="#">休闲娱乐</a></li>
+                <li><a href="#">电影</a></li>
+                <li><a href="#">旅游</a></li>
+                <li><a href="#">生活服务</a></li>
+                <li><a href="#">购物</a></li>
+                <li><a href="#">亲子</a></li>
+                <li><a href="#">结婚</a></li>
+            </ul>
+        </aside>
+        
+        <main class="content">
+            <div class="filter-bar">
+                <div class="filter-options">
+                    <div class="filter-option">全部区域</div>
+                    <div class="filter-option">全部商区</div>
+                    <div class="filter-option">智能排序</div>
+                    <div class="filter-option">筛选</div>
+                </div>
+                <div class="sort-options">
+                    <div class="sort-option active">综合排序</div>
+                    <div class="sort-option">销量最高</div>
+                    <div class="sort-option">距离最近</div>
+                </div>
+            </div>
+            
+            <div class="product-grid">
+                <!-- 商品卡片1 -->
+                <div class="product-card">
+                    <img src="./cuirouduo.jpg" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">【超值套餐】海底捞火锅双人套餐</h3>
+                        <p class="product-desc">精选肥牛+虾滑+蔬菜拼盘+饮料</p>
+                        <div class="product-price">
+                            <span class="current-price">¥168</span>
+                            <span class="original-price">¥218</span>
+                        </div>
+                        <span class="product-tag">新品</span>
+                        <span class="product-tag">限时特惠</span>
+                        <p class="sold-count">已售1234</p>
+                    </div>
+                </div>
+                
+                <!-- 商品卡片2 -->
+                <div class="product-card">
+                    <img src="./cuirouduo.jpg" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">星巴克咖啡券电子兑换券</h3>
+                        <p class="product-desc">大杯拿铁/美式任选，全国通用</p>
+                        <div class="product-price">
+                            <span class="current-price">¥28</span>
+                            <span class="original-price">¥35</span>
+                        </div>
+                        <span class="product-tag">爆款</span>
+                        <p class="sold-count">已售5678</p>
+                    </div>
+                </div>
+                
+                <!-- 商品卡片3 -->
+                <div class="product-card">
+                    <img src="./cuirouduo.jpg" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">必胜客披萨套餐2-3人餐</h3>
+                        <p class="product-desc">超级至尊披萨+小吃拼盘+饮料</p>
+                        <div class="product-price">
+                            <span class="current-price">¥129</span>
+                            <span class="original-price">¥169</span>
+                        </div>
+                        <span class="product-tag">限时折扣</span>
+                        <p class="sold-count">已售2345</p>
+                    </div>
+                </div>
+                
+                <!-- 商品卡片4 -->
+                <div class="product-card">
+                    <img src="./cuirouduo.jpg" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">肯德基全家桶套餐</h3>
+                        <p class="product-desc">原味鸡+辣翅+薯条+可乐</p>
+                        <div class="product-price">
+                            <span class="current-price">¥89</span>
+                            <span class="original-price">¥109</span>
+                        </div>
+                        <p class="sold-count">已售3456</p>
+                    </div>
+                </div>
+                
+                <!-- 商品卡片5 -->
+                <div class="product-card">
+                    <img src="./cuirouduo.jpg" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">哈根达斯冰淇淋火锅套餐</h3>
+                        <p class="product-desc">8种口味冰淇淋+水果+巧克力酱</p>
+                        <div class="product-price">
+                            <span class="current-price">¥198</span>
+                            <span class="original-price">¥258</span>
+                        </div>
+                        <span class="product-tag">新品</span>
+                        <p class="sold-count">已售789</p>
+                    </div>
+                </div>
+                
+                <!-- 商品卡片6 -->
+                <div class="product-card">
+                    <img src="./cuirouduo.jpg" alt="商品图片" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">呷哺呷哺单人小火锅套餐</h3>
+                        <p class="product-desc">肥牛套餐+锅底+小料+饮料</p>
+                        <div class="product-price">
+                            <span class="current-price">¥49</span>
+                            <span class="original-price">¥69</span>
+                        </div>
+                        <span class="product-tag">特惠</span>
+                        <p class="sold-count">已售4567</p>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-
-    <!-- 页面标题 -->
-    <div class="hero">
-        <h1>家恒牛羊肉</h1>
-        <p>每日新鲜直达，品质有保障</p>
-    </div>
-
-    <!-- 分类标签 -->
-    <div class="category-tabs">
-        <div class="tab" data-category="all">全部商品</div>
-        <div class="tab active" data-category="meat">牛羊肉系列</div>
-        <div class="tab" data-category="offal">牛羊杂系列</div>
-        <div class="tab" data-category="fish">鱼类系列</div>
-        <div class="tab" data-category="poultry">禽类系列</div>
-        <div class="tab" data-category="snacks">串类/袋装食品</div>
-        <div class="tab" data-category="dessert">甜点/主食类</div>
-        <div class="tab" data-category="cheese">芝士/锡纸类</div>
-        <div class="tab" data-category="vegetable">蔬菜/水果类</div>
-        <div class="tab" data-category="condiment">调料/用品类</div>
-        <div class="tab" data-category="twelve">12元系列</div>
-    </div>
-
-    <!-- 商品列表 -->
-    <div class="product-grid">
-        <!-- 肉类 - 1-7 -->
-        <div class="product-card" data-category="meat">
-            <div class="product-img-placeholder" data-img-src="/nyr (1).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛肋条</div>
-                <div class="product-desc">精选牛肋条，肉质鲜嫩，肥瘦相间，适合红烧、炖煮</div>
-                <div class="product-footer">
-                    <div class="price">￥38.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="meat">
-            <div class="product-img-placeholder" data-img-src="/nyr (2).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛上脑</div>
-                <div class="product-desc">牛上脑肉质细嫩，脂肪交杂均匀，有好看的大理石花纹</div>
-                <div class="product-footer">
-                    <div class="price">￥38.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="meat">
-            <div class="product-img-placeholder" data-img-src="/nyr (3).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛胸口</div>
-                <div class="product-desc">牛胸口肉，肥而不腻，口感Q弹，适合涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥38.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="meat">
-            <div class="product-img-placeholder" data-img-src="/nyr (4).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">后腿肉（瘦）</div>
-                <div class="product-desc">牛后腿纯瘦肉，肉质紧实，适合切片涮火锅或炒牛肉</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="meat">
-            <div class="product-img-placeholder" data-img-src="/nyr (5).jpg"></div>
-            <div class="product-badge">特色</div>
-            <div class="product-info">
-                <div class="product-name">羊肉（绒山羊）</div>
-                <div class="product-desc">精选绒山羊肉，肉质鲜嫩，无膻味，适合涮火锅、烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥48.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="meat">
-            <div class="product-img-placeholder" data-img-src="/nyr (6).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">腌牛肉</div>
-                <div class="product-desc">秘制配方腌制牛肉，入味均匀，开袋即食或烹饪均可</div>
-                <div class="product-footer">
-                    <div class="price">￥38.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="meat">
-            <div class="product-img-placeholder" data-img-src="/nyr (7).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">拌肉筋</div>
-                <div class="product-desc">精选牛蹄筋，手工拌制，麻辣鲜香，适合下酒</div>
-                <div class="product-footer">
-                    <div class="price">￥38.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 鱼类 - 8-14 -->
-        <div class="product-card" data-category="fish">
-            <div class="product-img-placeholder" data-img-src="/nyr (8).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">棒鱼</div>
-                <div class="product-desc">新鲜棒鱼，肉质细腻，刺少肉多，适合香煎或烤制</div>
-                <div class="product-footer">
-                    <div class="price">￥85.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="fish">
-            <div class="product-img-placeholder" data-img-src="/nyr (9).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">花鱼</div>
-                <div class="product-desc">新鲜花鱼，肉质鲜嫩，营养丰富，适合清蒸或红烧</div>
-                <div class="product-footer">
-                    <div class="price">￥85.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="fish">
-            <div class="product-img-placeholder" data-img-src="/nyr (10).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">黑鱼片</div>
-                <div class="product-desc">新鲜黑鱼切片，肉质鲜嫩，无刺，适合酸菜鱼或水煮鱼</div>
-                <div class="product-footer">
-                    <div class="price">￥50.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="fish">
-            <div class="product-img-placeholder" data-img-src="/nyr (11).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鱿鱼头</div>
-                <div class="product-desc">新鲜鱿鱼头，口感Q弹，适合辣炒或烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥50.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="fish">
-            <div class="product-img-placeholder" data-img-src="/nyr (12).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鱿鱼板</div>
-                <div class="product-desc">新鲜鱿鱼板，肉质鲜嫩，适合烧烤或铁板烧</div>
-                <div class="product-footer">
-                    <div class="price">￥45.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="fish">
-            <div class="product-img-placeholder" data-img-src="/nyr (13).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">多春鱼</div>
-                <div class="product-desc">新鲜多春鱼，腹中多籽，适合香煎或椒盐</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="fish">
-            <div class="product-img-placeholder" data-img-src="/nyr (14).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">凌鲫鱼</div>
-                <div class="product-desc">新鲜凌鲫鱼，肉质鲜嫩，适合清蒸或红烧</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 牛杂/羊杂类 - 15-25 -->
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (15).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛心管</div>
-                <div class="product-desc">新鲜牛心管，口感脆嫩，适合卤制、烧烤或涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥85.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (16).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛板筋</div>
-                <div class="product-desc">精选牛板筋，Q弹有嚼劲，适合卤制或烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥50.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (17).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛蹄筋</div>
-                <div class="product-desc">新鲜牛蹄筋，富含胶原蛋白，适合炖煮或红烧</div>
-                <div class="product-footer">
-                    <div class="price">￥45.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (18).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛肚</div>
-                <div class="product-desc">新鲜牛肚，口感脆嫩，适合涮火锅或卤制</div>
-                <div class="product-footer">
-                    <div class="price">￥45.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (19).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛舌头</div>
-                <div class="product-desc">新鲜牛舌头，肉质鲜嫩，适合卤制或红烧</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (20).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛眼睛</div>
-                <div class="product-desc">新鲜牛眼睛，口感嫩滑，适合卤制或红烧</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (21).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛碗口</div>
-                <div class="product-desc">新鲜牛碗口，肉质鲜嫩，适合卤制或红烧</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (22).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">羊蹄子</div>
-                <div class="product-desc">新鲜羊蹄子，富含胶原蛋白，适合红烧或酱卤</div>
-                <div class="product-footer">
-                    <div class="price">￥25.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (23).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛腰子</div>
-                <div class="product-desc">新鲜牛腰子，口感鲜嫩，适合爆炒或涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥25.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (24).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛心</div>
-                <div class="product-desc">新鲜牛心，口感紧实，适合卤制或爆炒</div>
-                <div class="product-footer">
-                    <div class="price">￥25.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="offal">
-            <div class="product-img-placeholder" data-img-src="/nyr (25).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛肝</div>
-                <div class="product-desc">新鲜牛肝，富含维生素A和铁，适合爆炒或卤制</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 禽类 - 26-33 -->
-        <div class="product-card" data-category="poultry">
-            <div class="product-img-placeholder" data-img-src="/nyr (26).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鸡脆骨</div>
-                <div class="product-desc">新鲜鸡脆骨，口感脆嫩，适合油炸或烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="poultry">
-            <div class="product-img-placeholder" data-img-src="/nyr (27).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鸡软骨</div>
-                <div class="product-desc">新鲜鸡软骨，口感脆嫩，适合油炸或烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="poultry">
-            <div class="product-img-placeholder" data-img-src="/nyr (28).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鸡脚筋</div>
-                <div class="product-desc">新鲜鸡脚筋，口感Q弹，适合卤制或凉拌</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="poultry">
-            <div class="product-img-placeholder" data-img-src="/nyr (29).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鸡翅</div>
-                <div class="product-desc">新鲜鸡翅，肉质鲜嫩，适合红烧、烤制或可乐鸡翅</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="poultry">
-            <div class="product-img-placeholder" data-img-src="/nyr (30).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鸡胗</div>
-                <div class="product-desc">新鲜鸡胗，口感紧实，适合卤制或爆炒</div>
-                <div class="product-footer">
-                    <div class="price">￥35.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="poultry">
-            <div class="product-img-placeholder" data-img-src="/nyr (31).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鸡心</div>
-                <div class="product-desc">新鲜鸡心，口感鲜嫩，适合卤制或爆炒</div>
-                <div class="product-footer">
-                    <div class="price">￥25.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="poultry">
-            <div class="product-img-placeholder" data-img-src="/nyr (32).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鸡皮</div>
-                <div class="product-desc">新鲜鸡皮，口感脆嫩，适合油炸或凉拌</div>
-                <div class="product-footer">
-                    <div class="price">￥25.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="poultry">
-            <div class="product-img-placeholder" data-img-src="/nyr (33).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">鸡胸肉</div>
-                <div class="product-desc">新鲜鸡胸肉，肉质鲜嫩，低脂肪高蛋白，适合煎制或烤制</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 串类/袋装食品 - 34-37 -->
-        <div class="product-card" data-category="snacks">
-            <div class="product-img-placeholder" data-img-src="/nyr (34).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">牛肉串</div>
-                <div class="product-desc">精选牛肉腌制后串成串，方便快捷，适合烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥28.0</div>
-                    <div class="weight">10串/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="snacks">
-            <div class="product-img-placeholder" data-img-src="/nyr (35).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">羊肉串</div>
-                <div class="product-desc">精选羊肉腌制后串成串，方便快捷，适合烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥30.0</div>
-                    <div class="weight">10串/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="snacks">
-            <div class="product-img-placeholder" data-img-src="/nyr (36).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">馒头串</div>
-                <div class="product-desc">松软馒头串成串，适合烧烤，刷上酱料更加美味</div>
-                <div class="product-footer">
-                    <div class="price">￥8.0</div>
-                    <div class="weight">1袋/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="snacks">
-            <div class="product-img-placeholder" data-img-src="/nyr (37).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">玉米肠</div>
-                <div class="product-desc">香甜玉米肠，适合烧烤或油炸</div>
-                <div class="product-footer">
-                    <div class="price">￥3.0</div>
-                    <div class="weight">1袋/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 甜点/主食类 - 38-42 -->
-        <div class="product-card" data-category="dessert">
-            <div class="product-img-placeholder" data-img-src="/nyr (38).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">面包片</div>
-                <div class="product-desc">松软面包片，适合早餐搭配牛奶或果酱</div>
-                <div class="product-footer">
-                    <div class="price">￥2.0</div>
-                    <div class="weight">1个/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="dessert">
-            <div class="product-img-placeholder" data-img-src="/nyr (39).jpg"></div>
-            <div class="product-badge">特色</div>
-            <div class="product-info">
-                <div class="product-name">黄金糕</div>
-                <div class="product-desc">传统手工制作黄金糕，口感软糯，香甜可口</div>
-                <div class="product-footer">
-                    <div class="price">￥25.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="dessert">
-            <div class="product-img-placeholder" data-img-src="/nyr (40).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">汉堡饼</div>
-                <div class="product-desc">松软汉堡饼，适合自制汉堡，方便快捷</div>
-                <div class="product-footer">
-                    <div class="price">￥5.0</div>
-                    <div class="weight">2个/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="dessert">
-            <div class="product-img-placeholder" data-img-src="/nyr (41).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">紫薯包</div>
-                <div class="product-desc">松软包子皮包裹紫薯馅，香甜可口，营养丰富</div>
-                <div class="product-footer">
-                    <div class="price">￥4.0</div>
-                    <div class="weight">1袋/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="dessert">
-            <div class="product-img-placeholder" data-img-src="/nyr (42).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">小馒头</div>
-                <div class="product-desc">松软小馒头，适合早餐或零食</div>
-                <div class="product-footer">
-                    <div class="price">￥4.0</div>
-                    <div class="weight">1袋/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 芝士/锡纸类 - 43-44 -->
-        <div class="product-card" data-category="cheese">
-            <div class="product-img-placeholder" data-img-src="/nyr (43).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">锡纸虾滑</div>
-                <div class="product-desc">新鲜虾仁制作虾滑，用锡纸包裹，适合烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥20.0</div>
-                    <div class="weight">1份/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="cheese">
-            <div class="product-img-placeholder" data-img-src="/nyr (44).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">芝士系列</div>
-                <div class="product-desc">多种芝士产品，适合烧烤或烘焙</div>
-                <div class="product-footer">
-                    <div class="price">￥20.0</div>
-                    <div class="weight">1份/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 蔬菜/水果类 - 45-47 -->
-        <div class="product-card" data-category="vegetable">
-            <div class="product-img-placeholder" data-img-src="/nyr (45).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">小红薯</div>
-                <div class="product-desc">香甜小红薯，适合烤着吃或煮粥</div>
-                <div class="product-footer">
-                    <div class="price">￥10.0</div>
-                    <div class="weight">1份/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="vegetable">
-            <div class="product-img-placeholder" data-img-src="/nyr (46).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">凤梨</div>
-                <div class="product-desc">新鲜凤梨切片，香甜多汁，适合直接食用</div>
-                <div class="product-footer">
-                    <div class="price">￥3.0</div>
-                    <div class="weight">1片/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="vegetable">
-            <div class="product-img-placeholder" data-img-src="/nyr (47).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">玉米粒</div>
-                <div class="product-desc">新鲜玉米粒，适合烧烤或煮玉米汤</div>
-                <div class="product-footer">
-                    <div class="price">￥3.0</div>
-                    <div class="weight">1把/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 调料/用品类 - 48-54 -->
-        <div class="product-card" data-category="condiment">
-            <div class="product-img-placeholder" data-img-src="/nyr (48).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">白钢炉</div>
-                <div class="product-desc">优质白钢炉，坚固耐用，适合家庭烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥32.0</div>
-                    <div class="weight">1个/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="condiment">
-            <div class="product-img-placeholder" data-img-src="/nyr (49).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">孜然粒</div>
-                <div class="product-desc">优质孜然粒，香气浓郁，适合烧烤或烹饪</div>
-                <div class="product-footer">
-                    <div class="price">￥4.0</div>
-                    <div class="weight">1袋/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="condiment">
-            <div class="product-img-placeholder" data-img-src="/nyr (50).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">孜然面</div>
-                <div class="product-desc">优质孜然研磨成粉，香气浓郁，适合烧烤或烹饪</div>
-                <div class="product-footer">
-                    <div class="price">￥4.0</div>
-                    <div class="weight">1袋/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="condiment">
-            <div class="product-img-placeholder" data-img-src="/nyr (51).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">老王头</div>
-                <div class="product-desc">优质调味料，适合炖菜、烤肉等多种烹饪方式</div>
-                <div class="product-footer">
-                    <div class="price">￥2.0</div>
-                    <div class="weight">1袋/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="condiment">
-            <div class="product-img-placeholder" data-img-src="/nyr (52).jpg"></div>
-            <div class="product-badge">特辣</div>
-            <div class="product-info">
-                <div class="product-name">辣椒面</div>
-                <div class="product-desc">优质辣椒研磨成粉，辣味十足，适合烧烤或烹饪</div>
-                <div class="product-footer">
-                    <div class="price">￥3.0</div>
-                    <div class="weight">1袋/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="condiment">
-            <div class="product-img-placeholder" data-img-src="/nyr (53).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">小碗</div>
-                <div class="product-desc">优质小碗，适合盛放调料或食物</div>
-                <div class="product-footer">
-                    <div class="price">￥4.0</div>
-                    <div class="weight">10个/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="condiment">
-            <div class="product-img-placeholder" data-img-src="/nyr (54).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">小碗</div>
-                <div class="product-desc">优质小碗，适合盛放调料或食物</div>
-                <div class="product-footer">
-                    <div class="price">￥5.0</div>
-                    <div class="weight">30个/份</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 12元系列 - 55-65 -->
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (55).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">夹心鱼豆腐</div>
-                <div class="product-desc">鱼豆腐中间夹有馅料，口感丰富，适合涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (56).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">黄金鱼豆腐</div>
-                <div class="product-desc">金黄酥脆外皮，内里嫩滑，适合油炸或涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-       <!-- 龙虾饼到实蛋的商品卡片 - 55-65 -->
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (55).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">夹心鱼豆腐</div>
-                <div class="product-desc">鱼豆腐中间夹有馅料，口感丰富，适合涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (56).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">黄金鱼豆腐</div>
-                <div class="product-desc">金黄酥脆外皮，内里嫩滑，适合油炸或涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (57).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">龙虾饼</div>
-                <div class="product-desc">精选龙虾肉制作，口感鲜美，适合油炸或烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (58).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">亲亲肠</div>
-                <div class="product-desc">迷你香肠，口感鲜嫩，适合油炸或涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (59).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">小饼子</div>
-                <div class="product-desc">松软小饼，适合烧烤或搭配汤品</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (60).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">脆骨丸</div>
-                <div class="product-desc">弹牙脆骨丸，口感丰富，适合涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (61).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">金针菇</div>
-                <div class="product-desc">新鲜金针菇，口感脆嫩，适合涮火锅或清炒</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (62).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">面筋</div>
-                <div class="product-desc">优质面筋，口感筋道，适合涮火锅或烧烤</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (63).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">蟹排</div>
-                <div class="product-desc">蟹风味鱼糜制品，口感鲜美，适合涮火锅</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (64).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">酸菜</div>
-                <div class="product-desc">腌制酸菜，酸爽可口，适合酸菜鱼或炖菜</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (65).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">黄蛋</div>
-                <div class="product-desc">特色黄蛋，口感丰富，适合烧烤或油炸</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="product-card" data-category="twelve">
-            <div class="product-img-placeholder" data-img-src="/nyr (66).jpg"></div>
-            <div class="product-info">
-                <div class="product-name">实蛋</div>
-                <div class="product-desc">特色实蛋，口感筋道，适合烧烤或油炸</div>
-                <div class="product-footer">
-                    <div class="price">￥12.0</div>
-                    <div class="weight">500g/份</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 底部信息 -->
-    <div class="footer">
-        <p>地址：XX市XX区XX路XX号 | 电话：020-12345678</p>
-        <p>营业时间：周一至周日 08:00-21:00</p>
-        <p>© 2025 家恒牛羊肉 版权所有</p>
-    </div>
-
-    <script>
-       document.addEventListener('DOMContentLoaded', function() {
-        // 预加载首屏关键图片
-        const preloadImages = [
-            '/nyr (1).jpg',
-            '/nyr (2).jpg',
-            // 其他首屏需要预加载的图片路径
-        ];
-        
-        preloadImages.forEach(src => {
-            const img = new Image();
-            img.src = src;
-        });
-
-        // 分类标签切换功能
-        const tabs = document.querySelectorAll('.tab');
-        const productCards = document.querySelectorAll('.product-card');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                // 移除所有标签的 active 类
-                tabs.forEach(t => t.classList.remove('active'));
-                // 给当前点击的标签添加 active 类
-                tab.classList.add('active');
-
-                const category = tab.dataset.category;
-
-                productCards.forEach(card => {
-                    if (category === 'all') {
-                        card.style.display = 'block';
-                        // 显示后加载图片
-                        loadImagesInCard(card);
-                    } else if (card.dataset.category === category) {
-                        card.style.display = 'block';
-                        // 显示后加载图片
-                        loadImagesInCard(card);
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
-        });
-
-        // 初始选中牛羊肉系列并触发筛选
-        const meatTab = document.querySelector('.tab[data-category="meat"]');
-        if (meatTab) {
-            meatTab.classList.add('active');
-            // 触发点击事件来执行筛选逻辑
-            meatTab.click();
-        }
-
-        // 初始加载可见图片
-        loadVisibleImages();
-
-        // 监听滚动事件，实现懒加载
-        window.addEventListener('scroll', loadVisibleImages);
-    });
-
-    // 加载可见区域的图片
-    function loadVisibleImages() {
-        const placeholders = document.querySelectorAll('.product-img-placeholder');
-        
-        placeholders.forEach(placeholder => {
-            if (isElementInViewport(placeholder) && !placeholder.classList.contains('loaded')) {
-                loadImage(placeholder);
-            }
-        });
-    }
-
-    // 加载单个卡片中的图片
-    function loadImagesInCard(card) {
-        const placeholders = card.querySelectorAll('.product-img-placeholder:not(.loaded)');
-        
-        placeholders.forEach(placeholder => {
-            if (isElementInViewport(placeholder)) {
-                loadImage(placeholder);
-            }
-        });
-    }
-
-    // 加载图片并替换占位符
-    function loadImage(placeholder) {
-        const imgSrc = placeholder.dataset.imgSrc;
-        const img = new Image();
-        
-        img.onload = function() {
-            // 图片加载完成后替换占位符
-            img.className = 'product-img';
-            img.alt = placeholder.parentElement.querySelector('.product-name').textContent;
-            placeholder.replaceWith(img);
-        };
-        
-        img.onerror = function() {
-            // 图片加载失败处理
-            placeholder.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#962d2d;">加载失败</div>';
-            placeholder.classList.add('loaded');
-        };
-        
-        img.src = imgSrc;
-        placeholder.classList.add('loaded');
-    }
-
-    // 判断元素是否在视口中
-    function isElementInViewport(el) {
-        const rect = el.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-    }
-    </script>
 </body>
-
 </html>
